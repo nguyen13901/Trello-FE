@@ -1,4 +1,3 @@
-import Button from '@mui/material/Button'
 import { useColorScheme } from '@mui/material/styles'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -8,6 +7,7 @@ import Box from '@mui/material/Box'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
+import Container from '@mui/material/Container'
 
 function ModeSelect() {
 
@@ -55,30 +55,51 @@ function ModeSelect() {
   )
 }
 
-function ModeToggle() {
-  const { mode, setMode } = useColorScheme()
-  return (
-    <Button
-      onClick={() => {
-        setMode(mode === 'light' ? 'dark' : 'light')
-      }}
-    >
-      {mode === 'light' ? 'Turn dark' : 'Turn light'}
-    </Button>
-  )
-}
-
 function App() {
 
   return (
-    <>
-      <ModeToggle />
-      <hr />
-      <ModeSelect />
-      <hr />
-      <div>Hello world</div>
-      <Button variant="contained">Hello world</Button>
-    </>
+    <Container disableGutters maxWidth
+      sx={{
+        height: '100vh'
+      }}
+    >
+      {/* HEADER */}
+      <Box
+        sx={{
+          backgroundColor: 'primary.light',
+          width: '100%',
+          height: (theme) => theme.trello.appBarHeight,
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <ModeSelect />
+      </Box>
+      {/* BOARD BAR */}
+      <Box
+        sx={{
+          backgroundColor: 'primary.dark',
+          width: '100%',
+          height: (theme) => theme.trello.boardBarHeight,
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        Board bar
+      </Box>
+      {/* CONTENT */}
+      <Box
+        sx={{
+          backgroundColor: 'primary.dark',
+          width: '100%',
+          height: (theme) => `calc(100vh - ${theme.trello.boardBarHeight}  - ${theme.trello.appBarHeight})`,
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        Board Content
+      </Box>
+    </Container >
   )
 }
 
