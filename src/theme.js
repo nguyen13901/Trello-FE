@@ -8,16 +8,16 @@ const theme = extendTheme({
   colorSchemes: {
     light: {
       palette: {
-        primary: {
-          main: '#758195'
-        }
+        // primary: {
+        //   main: '#758195'
+        // }
       }
     },
     dark: {
       palette: {
-        primary: {
-          main: '#738496'
-        }
+        // primary: {
+        //   main: '#738496'
+        // }
       }
     }
   },
