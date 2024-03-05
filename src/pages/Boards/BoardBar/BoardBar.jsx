@@ -38,8 +38,7 @@ function BoardBar() {
         overflowX: 'auto',
         borderTop: (theme) => `1px solid ${theme.palette.primary.main}`,
         paddingX: 2,
-        bgcolor: (theme) => theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
-        borderBottom: '1px solid white'
+        bgcolor: (theme) => theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'
       }}
     >
       <Box
@@ -97,7 +96,10 @@ function BoardBar() {
               width: 34,
               height: 34,
               fontSize: 16,
-              border: 'none'
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer',
+              '&:first-of-type': { bgcolor: '#a4b0be' }
             }
           }}
         >
