@@ -20,12 +20,14 @@ const MENU_STYLES = {
   '&:hover': {
     bgColor: 'primary.50'
   },
+  textTransform: 'capitalize',
   '& .MuiSvgIcon-root': {
     color: 'white'
   }
 }
 
-function BoardBar() {
+function BoardBar({ board }) {
+
   return (
     <Box
       sx={{
@@ -48,11 +50,11 @@ function BoardBar() {
           gap: 2
         }}
       >
-        <Chip icon={<DashboardIcon />} label="NguyenDev Trello Dashboard"
+        <Chip icon={<DashboardIcon />} label={board?.title}
           clickable
           sx={MENU_STYLES}
         />
-        <Chip icon={<VpnLockIcon />} label="Public/Private Workspace"
+        <Chip icon={<VpnLockIcon />} label={board?.type}
           clickable
           sx={MENU_STYLES}
         />
