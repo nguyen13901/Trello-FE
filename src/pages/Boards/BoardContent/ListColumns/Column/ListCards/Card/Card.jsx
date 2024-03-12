@@ -21,7 +21,8 @@ function Card({ card }) {
   const dndKitCardStyles = {
     transform: CSS.Translate.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : undefined // Để khi kéo thì card sẽ bi làm mờ
+    opacity: isDragging ? 0.5 : undefined, // Để khi kéo thì card sẽ bi làm mờ
+    border: isDragging ? '1px solid #2980b9' : undefined
   }
 
   const shouldShowCardActions = () => {
