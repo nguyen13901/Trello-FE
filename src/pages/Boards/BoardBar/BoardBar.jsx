@@ -50,10 +50,12 @@ function BoardBar({ board }) {
           gap: 2
         }}
       >
-        <Chip icon={<DashboardIcon />} label={board?.title}
-          clickable
-          sx={MENU_STYLES}
-        />
+        <Tooltip title={board?.description} sx={{ cursor: 'pointer' }}>
+          <Chip icon={<DashboardIcon />} label={board?.title}
+            clickable
+            sx={MENU_STYLES}
+          />
+        </Tooltip >
         <Chip icon={<VpnLockIcon />} label={board?.type}
           clickable
           sx={MENU_STYLES}
