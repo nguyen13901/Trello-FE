@@ -18,7 +18,7 @@ const MENU_STYLES = {
   paddingX: '5px',
   borderRadius: '4px',
   '&:hover': {
-    bgColor: 'primary.50'
+    bgcolor: 'primary.50'
   },
   textTransform: 'capitalize',
   '& .MuiSvgIcon-root': {
