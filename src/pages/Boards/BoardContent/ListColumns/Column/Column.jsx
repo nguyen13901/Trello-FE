@@ -22,6 +22,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { mapOrder } from '~/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { toast } from 'react-toastify'
 
 function Column({ column }) {
 
@@ -58,6 +59,7 @@ function Column({ column }) {
 
   const addNewCard = () => {
     if (!NewCardTitle) {
+      toast.error('Please enter card title!')
       return
     }
 
@@ -195,6 +197,7 @@ function Column({ column }) {
                 size='small'
                 variant='outlined'
                 autoFocus
+                data-no-dnd='true'
                 value={NewCardTitle}
                 onChange={(event) => setNewCardTitle(event.target.value)}
                 sx={{
