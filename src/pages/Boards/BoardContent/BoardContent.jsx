@@ -15,7 +15,7 @@ import {
 import {
   MouseSensor,
   TouchSensor
-} from '~/customLibraries/dndKitSensors'
+} from '~/customLibraries/DndKitSensors'
 import { mapOrder } from '~/utils/sorts'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -29,7 +29,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
 
   const mouseSensor = useSensor(MouseSensor, {
     // Require the mouse to move by 10 pixels before activating
@@ -225,7 +225,16 @@ function BoardContent({ board }) {
       if (active.id !== over.id) {
         const oldColumnIndex = orderedColumns.findIndex(c => c._id === active.id)
         const newColumnIndex = orderedColumns.findIndex(c => c._id === over.id)
-        setOrderedColumns(arrayMove(orderedColumns, oldColumnIndex, newColumnIndex))
+
+        const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
+
+        // Cập nhật lại state
+        moveColumns(dndOrderedColumns)
+
+        // Gọi API ở đây
+
+        // Vẫn set state để UI vẫn mượt khi API bị delay
+        setOrderedColumns(dndOrderedColumns)
       }
     }
 
@@ -300,7 +309,11 @@ function BoardContent({ board }) {
           p: '10px 0px'
         }}
       >
-        {orderedColumns && <ListColumns columns={orderedColumns} />}
+        {orderedColumns && <ListColumns
+          columns={orderedColumns}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+        />}
         <DragOverlay dropAnimation={dropAnimation}>
           {(!activeDragItemId || !activeDragItemType) && null}
           {(activeDragItemId && activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}

@@ -9,20 +9,30 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 
-function ListColumns({ columns }) {
+function ListColumns({ columns, createNewColumn, createNewCard }) {
 
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('Please enter column title')
       return
     }
 
-    // Xử lý và gọi API ở đây
+    // Tạo dữ liệu Column để gọi API
+    const newColumnData = {
+      title: newColumnTitle
+    }
+
+    /**
+     * Gọi lên props function createNewColumn nẳm ở component cha cao nhất (boards/_id.jsx)
+     * Đây là cách tạm thời, phương án chuẩn là đưa dữ liệu Board ra ngoài Redux Global Store
+     * Sau đó gọi API thông qua Redux
+     */
+    await createNewColumn(newColumnData)
 
     // Đóng trạng thái thêm Column mới & Clear Input
     toggleOpenNewColumnForm()
@@ -42,7 +52,11 @@ function ListColumns({ columns }) {
           '&::webkit-scrollbar-track': { m: 2 }
         }}
       >
-        {columns?.map(column => <Column key={column?._id} column={column} />)}
+        {columns?.map(column => <Column
+          key={column?._id}
+          column={column}
+          createNewCard={createNewCard}
+        />)}
         {!openNewColumnForm ?
           <Box
             sx={{
