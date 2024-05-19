@@ -16,7 +16,6 @@ import {
   MouseSensor,
   TouchSensor
 } from '~/customLibraries/DndKitSensors'
-import { mapOrder } from '~/utils/sorts'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
@@ -29,7 +28,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumns, moveCardInTheSameColumn }) {
 
   const mouseSensor = useSensor(MouseSensor, {
     // Require the mouse to move by 10 pixels before activating
@@ -58,7 +57,9 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
   const lastOverId = useRef(null)
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    // Column đã được sắp xếp ở component cha
+    // setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    setOrderedColumns(board?.columns)
   }, [board])
 
   const moveCardBetweenDifferenceColumns = (
@@ -204,6 +205,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
         const newCardIndex = overColumn?.cards?.findIndex(c => c._id === overCardId)
 
         const dndOrderedCards = arrayMove(overColumn?.cards, oldCardIndex, newCardIndex)
+        const dndOrderedCardIds = dndOrderedCards.map(card => card._id)
+
         // console.log('dndOrderedCards', dndOrderedCards)
         setOrderedColumns(prevColumns => {
           const nextColumns = cloneDeep(prevColumns)
@@ -216,8 +219,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
           targetColumn.cardOrderIds = dndOrderedCards.map(card => card._id)
           return nextColumns
         })
+        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
       }
-
     }
 
     // Xử lý kéo thả Columns trong Boardcontent
@@ -228,13 +231,11 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
 
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
 
-        // Cập nhật lại state
-        moveColumns(dndOrderedColumns)
-
-        // Gọi API ở đây
-
         // Vẫn set state để UI vẫn mượt khi API bị delay
         setOrderedColumns(dndOrderedColumns)
+
+        // Cập nhật lại state và gọi API trong func này
+        moveColumns(dndOrderedColumns)
       }
     }
 
