@@ -4,9 +4,18 @@ import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 import { useEffect, useState } from 'react'
-import { fetchBoardDetailsAPI, createNewColumnAPI, createNewCardAPI, updateBoardDetailsAPI } from '~/apis'
+import {
+  fetchBoardDetailsAPI,
+  createNewColumnAPI,
+  createNewCardAPI,
+  updateBoardDetailsAPI,
+  updateColumnDetailsAPI
+} from '~/apis'
 import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formartters'
+import { mapOrder } from '~/utils/sorts'
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
 
 function Board() {
 
@@ -17,10 +26,22 @@ function Board() {
     const boardId = '6637840f53e1651f893bdb0f'
     // call API
     fetchBoardDetailsAPI(boardId).then((board) => {
+
+      // API đổ về gồm mảng các card chưa được sắp xếp thứ tự
+      // Việc sắp xếp các column được thực hiện tại child component là BoardContent
+      // Việc sắp xếp các card được thực hiện tại child component là Column
+      // Mảng card, column ở component con và cha khác nhau > conflict
+      // >>>> Cập nhật card tại component cha và đổ dữ liệu xuống component con
+      board.columns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
+
       board.columns.forEach(column => {
+        // Xử lý những column rỗng
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
+        }
+        else {
+          column.cards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
         }
       })
       setBoard(board)
@@ -59,9 +80,13 @@ function Board() {
 
   }
 
-  const moveColumns = async (dndOrderedColumns) => {
+  /**
+   * Khi di chuyển column trong 1 board
+   * Chỉ việc gọi API để cập nhật mảng columnOrderIds của Board chứa nó
+   */
+  const moveColumns = (dndOrderedColumns) => {
     const dndOrderedColumnIds = dndOrderedColumns.map(c => c._id)
-    // Cập nhật lại board
+    // Cập nhật lại state board
     const newBoard = { ...board }
     newBoard.columnOrderIds = dndOrderedColumnIds
     setBoard(newBoard)
@@ -70,22 +95,54 @@ function Board() {
     updateBoardDetailsAPI(newBoard._id, { columnOrderIds: dndOrderedColumnIds })
   }
 
+  /**
+   * Khi di chuyển card trong 1 column
+   * Chỉ việc gọi API để cập nhật mảng cardOrderIds của Column chứa nó
+   */
+  const moveCardInTheSameColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
+    // Cập nhật lại state board
+    const newBoard = { ...board }
+    const columnToUpdate = newBoard.columns.find(column => column._id === columnId)
+
+    if (columnToUpdate) {
+      columnToUpdate.cards = dndOrderedCards
+      columnToUpdate.cardOrderIds = dndOrderedCardIds
+      setBoard(newBoard)
+    }
+
+    // Gọi API update column
+    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+  }
+
   return (
-    <Container disableGutters
-      sx={{
-        height: '100vh',
-        minWidth: '100vw'
-      }}
-    >
-      <AppBar />
-      <BoardBar board={board} />
-      <BoardContent
-        board={board}
-        createNewColumn={createNewColumn}
-        createNewCard={createNewCard}
-        moveColumns={moveColumns}
-      />
-    </Container >
+    board ?
+      <Container disableGutters
+        sx={{
+          height: '100vh',
+          minWidth: '100vw'
+        }}
+      >
+        <AppBar />
+        <BoardBar board={board} />
+        <BoardContent
+          board={board}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+          moveColumns={moveColumns}
+          moveCardInTheSameColumn={moveCardInTheSameColumn}
+        />
+      </Container >
+      :
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+        width: '100vw',
+        height: '100vh'
+      }}>
+        <CircularProgress />
+      </Box>
   )
 }
 

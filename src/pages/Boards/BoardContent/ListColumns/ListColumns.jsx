@@ -16,7 +16,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
-  const addNewColumn = async () => {
+  const addNewColumn = () => {
     if (!newColumnTitle) {
       toast.error('Please enter column title')
       return
@@ -32,7 +32,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
      * Đây là cách tạm thời, phương án chuẩn là đưa dữ liệu Board ra ngoài Redux Global Store
      * Sau đó gọi API thông qua Redux
      */
-    await createNewColumn(newColumnData)
+    createNewColumn(newColumnData)
 
     // Đóng trạng thái thêm Column mới & Clear Input
     toggleOpenNewColumnForm()
