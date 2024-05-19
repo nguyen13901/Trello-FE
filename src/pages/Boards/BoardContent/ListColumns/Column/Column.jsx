@@ -24,7 +24,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
 
-function Column({ column }) {
+function Column({ column, createNewCard }) {
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable(
     {
@@ -55,19 +55,25 @@ function Column({ column }) {
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
-  const [NewCardTitle, setNewCardTitle] = useState('')
+  const [newCardTitle, setnewCardTitle] = useState('')
 
-  const addNewCard = () => {
-    if (!NewCardTitle) {
+  const addNewCard = async () => {
+    if (!newCardTitle) {
       toast.error('Please enter card title!')
       return
     }
 
-    // Xử lý và gọi API ở đây
+    // Tạo dữ liệu Column để gọi API
+    const newCardData = {
+      title: newCardTitle,
+      columnId: column?._id
+    }
+
+    await createNewCard(newCardData)
 
     // Đóng trạng thái thêm Column mới & Clear Input
     toggleOpenNewCardForm()
-    setNewCardTitle('')
+    setnewCardTitle('')
   }
 
   return (
@@ -198,8 +204,8 @@ function Column({ column }) {
                 variant='outlined'
                 autoFocus
                 data-no-dnd='true'
-                value={NewCardTitle}
-                onChange={(event) => setNewCardTitle(event.target.value)}
+                value={newCardTitle}
+                onChange={(event) => setnewCardTitle(event.target.value)}
                 sx={{
                   '& label': { color: 'text.primary' },
                   '& input': {
