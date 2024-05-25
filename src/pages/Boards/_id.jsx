@@ -9,13 +9,16 @@ import {
   createNewColumnAPI,
   createNewCardAPI,
   updateBoardDetailsAPI,
-  updateColumnDetailsAPI
+  updateColumnDetailsAPI,
+  moveCardToDifferentColumnAPI,
+  deleteColumnDetailsAPI
 } from '~/apis'
 import { isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formartters'
 import { mapOrder } from '~/utils/sorts'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
+import { toast } from 'react-toastify'
 
 function Board() {
 
@@ -73,6 +76,12 @@ function Board() {
     const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
 
     if (columnToUpdate) {
+
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = []
+        columnToUpdate.cardOrderIds = []
+      }
+
       columnToUpdate.cards.push(createdCard)
       columnToUpdate.cardOrderIds.push(createdCard._id)
       setBoard(newBoard)
@@ -88,6 +97,7 @@ function Board() {
     const dndOrderedColumnIds = dndOrderedColumns.map(c => c._id)
     // Cập nhật lại state board
     const newBoard = { ...board }
+    newBoard.columns = dndOrderedColumns
     newBoard.columnOrderIds = dndOrderedColumnIds
     setBoard(newBoard)
 
@@ -114,6 +124,47 @@ function Board() {
     updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
   }
 
+  /**
+   * Khi di chuyển card sang Column khác
+   * B1: Cập nhật mảng CardOrderIds của Column ban đầu chứa nó (Cụ thể là xóa card_id ra khỏi mảng CardOrderIds của column ban đầu)
+   * B2: Cập nhật mảng CardOrderIds của Column tiếp theo (Thêm card_id vào mảng CardOrderIds)
+   * B3: Cập nhật lại ColumnId của card đã kéo
+   */
+  const moveCardToDifferentColumn = (currentCardId, prevColumnId, nextColumnId, dndOrderedColumns) => {
+    // Cập nhật lại dữ liệu state board
+    const dndOrderedColumnIds = dndOrderedColumns.map(c => c._id)
+    const newBoard = { ...board }
+    newBoard.columns = dndOrderedColumns
+    newBoard.columnOrderIds = dndOrderedColumnIds
+    setBoard(newBoard)
+
+    // Làm sạch dữ liệu trước khi gọi API
+    let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId).cardOrderIds
+    if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
+
+    // Gọi API xử lý phía BE
+    moveCardToDifferentColumnAPI({
+      currentCardId,
+      prevColumnId,
+      prevCardOrderIds: prevCardOrderIds,
+      nextColumnId,
+      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId).cardOrderIds
+    })
+  }
+
+  // Xử lý xóa một column
+  const deleteColumnDetails = (columnId) => {
+    // Xử lý state board, làm sạch dữ liệu FE
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== columnId)
+    setBoard(newBoard)
+    // Gọi API ở đây
+    deleteColumnDetailsAPI(columnId).then(res => {
+      toast.success(res?.deleteResult)
+    })
+  }
+
   return (
     board ?
       <Container disableGutters
@@ -130,6 +181,8 @@ function Board() {
           createNewCard={createNewCard}
           moveColumns={moveColumns}
           moveCardInTheSameColumn={moveCardInTheSameColumn}
+          moveCardToDifferentColumn={moveCardToDifferentColumn}
+          deleteColumnDetails={deleteColumnDetails}
         />
       </Container >
       :

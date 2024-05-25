@@ -22,8 +22,9 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 
-function Column({ column, createNewCard }) {
+function Column({ column, createNewCard, deleteColumnDetails }) {
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable(
     {
@@ -77,6 +78,21 @@ function Column({ column, createNewCard }) {
     setnewCardTitle('')
   }
 
+  const confirmDeleteColumn = useConfirm()
+
+  // Xử lý xóa column và cards ở bên trong nó
+  const handleDeleteColumn = () => {
+    confirmDeleteColumn({
+      title: 'Delete Column?',
+      description: 'This action permanently delete your Column and its Cards! Are you sure?'
+    }).then(() => {
+      /**
+       * 
+       */
+      deleteColumnDetails(column._id)
+    }).catch(() => { })
+  }
+
   return (
     <div ref={setNodeRef} style={dndKitColumnStyles}{...attributes}>
       < Box
@@ -125,6 +141,7 @@ function Column({ column, createNewCard }) {
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
+            onClick={handleClose}
             MenuListProps={{
               'aria-labelledby': 'basic-column-dropdown'
             }}
@@ -133,7 +150,9 @@ function Column({ column, createNewCard }) {
               <ListItemIcon>
                 <AddCardIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText>Add new card</ListItemText>
+              <ListItemText
+                onClick={toggleOpenNewCardForm}
+              >Add new card</ListItemText>
             </MenuItem>
             <MenuItem>
               <ListItemIcon>
@@ -160,7 +179,9 @@ function Column({ column, createNewCard }) {
               </ListItemIcon>
               <ListItemText>Archive column</ListItemText>
             </MenuItem>
-            <MenuItem>
+            <MenuItem
+              onClick={handleDeleteColumn}
+            >
               <ListItemIcon>
                 <DeleteForeverIcon fontSize="small" />
               </ListItemIcon>
