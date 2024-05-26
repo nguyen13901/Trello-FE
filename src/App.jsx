@@ -1,4 +1,4 @@
-import LandingPageBar from './components/LandingPage/LandingPageBar'
+import LandingPage from './components/LandingPage/LandingPage'
 import Board from './pages/Boards/_id'
 
 function App() {
@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       {/* <Board /> */}
-      <LandingPageBar />
+      <LandingPage />
     </>
   )
 }

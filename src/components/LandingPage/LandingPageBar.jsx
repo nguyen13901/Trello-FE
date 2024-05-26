@@ -1,4 +1,3 @@
-import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import { ReactComponent as TrelloIcon } from '~/assets/trello2.svg'
 import SvgIcon from '@mui/material/SvgIcon'
@@ -11,120 +10,112 @@ import Resources from './Menus/Resources'
 
 function LandingPageBar() {
   return (
-    <Container
-      disableGutters
+
+    <Box
       sx={{
-        height: '100vh',
-        minWidth: '100vw'
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
+        position: 'static'
       }}
     >
       <Box
         sx={{
+          width: '86%',
+          height: (theme) => theme.trello.appBarHeight,
           display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'column',
-          position: 'static'
+          justifyContent: 'space-between'
         }}
       >
         <Box
           sx={{
-            width: '86%',
-            height: (theme) => theme.trello.appBarHeight,
-            display: 'flex',
-            justifyContent: 'space-between'
+            display: 'flex'
           }}
         >
-          <Box
-            sx={{
-              display: 'flex'
-            }}
-          >
-            {/* Trello logo */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: 2
-              }}
-            >
-              <SvgIcon
-                component={TrelloIcon}
-                inheritViewBox
-                sx={{
-                  color: 'white',
-                  width: 'auto',
-                  height: 'auto'
-                }}
-              />
-
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 1
-              }}
-            >
-              <Features />
-              <Solutions />
-              <Plans />
-              <Pricing />
-              <Resources />
-            </Box>
-          </Box>
+          {/* Trello logo */}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              flexDirection: 'row',
-              gap: 2
+              padding: 2
             }}
           >
-            <Box>
-              <Button
-                sx={{
-                  padding: 2
-                }}
-              >Login</Button>
-            </Box>
-            <Box>
-              <Button
-                sx={{
-                  padding: 2
-                }}
-                variant="contained"
-              >Get Trello for free</Button>
-            </Box>
+            <SvgIcon
+              component={TrelloIcon}
+              inheritViewBox
+              sx={{
+                color: 'white',
+                width: 'auto',
+                height: 'auto'
+              }}
+            />
+
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <Features />
+            <Solutions />
+            <Plans />
+            <Pricing />
+            <Resources />
           </Box>
         </Box>
         <Box
           sx={{
-            height: (theme) => theme.trello.appBarHeight,
-            bgcolor: '#DEEBFF',
             display: 'flex',
-            width: '100%',
             alignItems: 'center',
-            justifyContent: 'center'
+            flexDirection: 'row'
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              padding: '0 4rem',
-              gap: 0.5
-            }}
-          >
-            <Typography>Accelerate your teams' work with Atlassian Intelligence (AI) features 🤖 now available for all Premium and Enterprise!</Typography>
-            <Link
+          <Box>
+            <Button
               sx={{
-                cursor: 'pointer'
+                padding: '1rem 2rem'
               }}
-            >Learn more.</Link>
+            >Login</Button>
+          </Box>
+          <Box>
+            <Button
+              sx={{
+                padding: '1rem 2rem'
+              }}
+              variant="contained"
+            >Get Trello for free</Button>
           </Box>
         </Box>
       </Box>
-    </Container >
+      <Box
+        sx={{
+          height: (theme) => theme.trello.appBarHeight,
+          bgcolor: '#DEEBFF',
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            padding: '0 4rem',
+            gap: 0.5
+          }}
+        >
+          <Typography>Accelerate your teams work with Atlassian Intelligence (AI) features 🤖 now available for all Premium and Enterprise!</Typography>
+          <Link
+            sx={{
+              cursor: 'pointer'
+            }}
+          >Learn more.</Link>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
